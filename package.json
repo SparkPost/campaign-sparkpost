@@ -1,0 +1,33 @@
+{
+  "name": "campaign-sparkpost",
+  "version": "1.0.0",
+  "description": "SparkPost email provider for Campaign",
+  "main": "index.js",
+  "scripts": {
+    "test": "jshint index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SparkPost/campaign-sparkpost.git"
+  },
+  "keywords": [
+    "sparkpost",
+    "campaign"
+  ],
+  "author": {
+    "name": "SparkPost",
+    "email": "developers@sparkpost.com",
+    "url": "https://developers.sparkpost.com"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SparkPost/campaign-sparkpost/issues"
+  },
+  "homepage": "https://github.com/SparkPost/campaign-sparkpost#readme",
+  "dependencies": {
+    "sparkpost": "^1.1.0"
+  },
+  "devDependencies": {
+    "jshint": "^2.9.1"
+  }
+}
