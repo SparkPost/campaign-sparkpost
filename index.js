@@ -1,22 +1,25 @@
 'use strict';
 
-var sparkpost = require('sparkpost');
+var Sparkpost = require('sparkpost');
 var _ = require('lodash');
 
 // TODO provider .merge (recipient and transmission level substitution data)
 // TODO images: attachments?
 
 module.exports = function(options) {
-  var opts = _.defaults({}, options, {num_rcpt_errors: 3, apiKey: process.env.SPARKPOST_API_KEY});
-  var client = sparkpost(opts.apiKey, opts);
+  var client;
+  var opts = _.defaults({}, options, {num_rcpt_errors: 3, key: process.env.SPARKPOST_API_KEY});
 
-  if (!opts.apiKey) {
-    console.warn('node_modules/campaign: Mandrill API key not set');
+  if (!opts.key) {
+    console.warn('campaign: SparkPost API key not set');
   }
+
+  client = new Sparkpost(opts);
 
   return {
     name: 'sparkpost',
     send: function (model, done) {
+      _.defaults(model, {provider: {}});
       client.transmissions.send(getTransmissionsConfig(model), done);
     }
   };
@@ -24,21 +27,24 @@ module.exports = function(options) {
   function getTransmissionsConfig(model) {
     var config = {
       transmissionBody: {
-        from: formatFrom(model),
-        campaignId: model._template,
-        subject: model.subject,
-        html: model.html
+        content: {
+          from: formatFrom(model),
+          campaignId: model._template,
+          subject: model.subject,
+          html: model.html,
+          text: 'this is text'
+        },
+        substitutionData: {},
+        recipients: formatRecipients(model)
       },
-      num_rcpt_errors: opts.num_rcpt_errors,
-      substitutionData: {},
-      recipients: formatRecipients(model)
+      num_rcpt_errors: opts.num_rcpt_errors
     };
 
     if (model.provider.tags) {
       config.transmissionBody.metadata = {tags: model.provider.tags};
     }
 
-    return config
+    return config;
   }
 
   function formatFrom(model) {
