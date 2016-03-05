@@ -33,7 +33,7 @@ allows you to send large batches but not be overwhelmed by errors.
 
 ### `options.campaign` 
 
-(Optional) A SparkPost campaign to use when when sending. This can be used to search for mailings in SparkPost later.
+(Optional) Defaults to `model._template`. A SparkPost campaign to use when when sending. This can be used to search for mailings in SparkPost later.
 
 ## Tags
 
