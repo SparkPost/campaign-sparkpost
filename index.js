@@ -3,7 +3,6 @@
 var Sparkpost = require('sparkpost');
 var _ = require('lodash');
 
-// TODO provider .merge (recipient and transmission level substitution data)
 // TODO images: attachments?
 
 module.exports = function(options) {
@@ -25,25 +24,20 @@ module.exports = function(options) {
   };
 
   function getTransmissionsConfig(model) {
-    var config = {
+    return {
       transmissionBody: {
         content: {
           from: formatFrom(model),
-          campaignId: model._template,
+          campaignId: opts.campaign || model._template,
           subject: model.subject,
           html: model.html
         },
         substitutionData: _.get(model.provider.merge, '*', {}),
+        metadata:  {tags: model.provider.tags || [model._template]},
         recipients: formatRecipients(model)
       },
       num_rcpt_errors: opts.num_rcpt_errors
     };
-
-    if (model.provider.tags) {
-      config.transmissionBody.metadata = {tags: model.provider.tags};
-    }
-
-    return config;
   }
 
   function formatFrom(model) {
@@ -57,11 +51,11 @@ module.exports = function(options) {
   }
 
   function formatRecipients(model) {
-    var tags = model.provider.tags || [model._template];
+    var tags = _.cloneDeep(model.provider.tags) || [model._template];
     var to = model.to;
 
     // sparkpost allows a max of 10 tags per recipient
-    tags.splice(0, 10);
+    tags = tags.splice(0, 10);
 
     if (!Array.isArray(to)) {
       to = [to];

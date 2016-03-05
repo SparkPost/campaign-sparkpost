@@ -9,5 +9,6 @@
   "eqnull": true,
   "strict": true,
   "node": true,
-  "immed": true
+  "immed": true,
+  "mocha": true
 }
