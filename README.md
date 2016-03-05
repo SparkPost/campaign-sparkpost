@@ -1,4 +1,7 @@
 # campaign-sparkpost
+[![Build Status](https://travis-ci.org/SparkPost/campaign-sparkpost.svg?branch=master)](https://travis-ci.org/SparkPost/campaign-sparkpost)
+[![Coverage Status](https://coveralls.io/repos/github/SparkPost/campaign-sparkpost/badge.svg?branch=master)](https://coveralls.io/github/SparkPost/campaign-sparkpost?branch=master)
+
 SparkPost provider for [Campaign](https://github.com/bevacqua/campaign)
 
 ## Usage
