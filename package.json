@@ -4,7 +4,8 @@
   "description": "SparkPost email provider for Campaign",
   "main": "index.js",
   "scripts": {
-    "test": "jshint index.js"
+    "pretest": "jshint index.js ./test",
+    "test": "istanbul cover --report lcov --dir coverage/ _mocha ./test -- --colors --recursive"
   },
   "repository": {
     "type": "git",
@@ -28,6 +29,12 @@
     "sparkpost": "^1.1.0"
   },
   "devDependencies": {
-    "jshint": "^2.9.1"
+    "chai": "^3.5.0",
+    "istanbul": "^0.4.2",
+    "jshint": "^2.9.1",
+    "mocha": "^2.4.5",
+    "proxyquire": "^1.7.4",
+    "sinon": "^1.17.3",
+    "sinon-chai": "^2.8.0"
   }
 }
