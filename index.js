@@ -31,10 +31,9 @@ module.exports = function(options) {
           from: formatFrom(model),
           campaignId: model._template,
           subject: model.subject,
-          html: model.html,
-          text: 'this is text'
+          html: model.html
         },
-        substitutionData: {},
+        substitutionData: _.get(model.provider.merge, '*', {}),
         recipients: formatRecipients(model)
       },
       num_rcpt_errors: opts.num_rcpt_errors
@@ -74,7 +73,8 @@ module.exports = function(options) {
         address: {
           email: recipient
         },
-        tags: tags
+        tags: tags,
+        substitutionData: _.get(model.provider.merge, recipient, {})
       };
     });
   }
