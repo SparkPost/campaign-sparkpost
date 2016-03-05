@@ -39,6 +39,7 @@ describe('Campaign Sparkpost', function() {
       from: 'walterwhite@jpwynnhs.gov',
       _template: 'default',
       subject: 'Better Call Saul',
+      images: [],
       html: '<h1>Saul Goodman</h1><p>Call (505) 503-4455</p>'
     };
 
@@ -54,6 +55,42 @@ describe('Campaign Sparkpost', function() {
     expect(provider).to.have.keys(['name', 'send']);
     expect(provider.name).to.equal('sparkpost');
     expect(provider.send).to.be.a('function');
+  });
+
+  describe('API Key', function() {
+    var key;
+    var envKeyOrig;
+
+    beforeEach(function() {
+      key = '5055034455';
+      envKeyOrig = process.env.SPARKPOST_API_KEY;
+      sinon.spy(console, 'warn');
+    });
+
+    afterEach(function() {
+      process.env.SPARKPOST_API_KEY = envKeyOrig;
+      console.warn.restore();
+    });
+
+    it('should set an api key from config', function() {
+      campaignSparkpost({key: key});
+      expect(sparkpostMock.args[0][0].key).to.equal(key);
+    });
+
+    it('should set an api key from environment', function() {
+      process.env.SPARKPOST_API_KEY = key;
+
+      campaignSparkpost();
+      expect(sparkpostMock.args[0][0].key).to.equal(key);
+    });
+
+    it('should log a warning if no api key is set', function() {
+      delete process.env.SPARKPOST_API_KEY;
+
+      campaignSparkpost();
+      expect(console.warn).to.have.been.calledWith('campaign: SparkPost API key not set');
+      expect(sparkpostMock.args[0][0].key).not.to.exist;
+    });
   });
 
   describe('Sending', function() {
@@ -80,6 +117,7 @@ describe('Campaign Sparkpost', function() {
       expect(sendCfg.transmissionBody.content.campaignId).to.equal(sendModel._template);
       expect(sendCfg.transmissionBody.content.subject).to.equal(sendModel.subject);
       expect(sendCfg.transmissionBody.content.html).to.equal(sendModel.html);
+      expect(sendCfg.transmissionBody.content.inline_images).not.to.exist;
 
       expect(sendCfg.transmissionBody.substitutionData).to.deep.equal({});
       expect(sendCfg.transmissionBody.metadata).to.deep.equal({tags: [sendModel._template]});
@@ -121,6 +159,15 @@ describe('Campaign Sparkpost', function() {
       sendCfg = getSpSendConfig();
 
       expect(sendCfg.transmissionBody.content.from).to.equal(expectedFrom);
+    });
+
+    it('should configure num_rcpt_errors', function() {
+      sparkpostClientMock.transmissions.send.reset();
+
+      provider = campaignSparkpost({num_rcpt_errors: 5});
+
+      provider.send(sendModel, done);
+      expect(getSpSendConfig().num_rcpt_errors).to.equal(5);
     });
 
     it('should be able to set sparkpost campaign', function() {
@@ -228,39 +275,32 @@ describe('Campaign Sparkpost', function() {
     });
   });
 
-  describe('API Key', function() {
-    var key;
-    var envKeyOrig;
+  describe('Images', function() {
+    var provider;
 
     beforeEach(function() {
-      key = '5055034455';
-      envKeyOrig = process.env.SPARKPOST_API_KEY;
-      sinon.spy(console, 'warn');
+      sendModel.images = [{
+        mime: 'image/png',
+        data: 'YmV0dGVyY2FsbHNhdWw=',
+        name: 'jimmymcgill'
+      }];
+
+      provider = campaignSparkpost();
     });
 
-    afterEach(function() {
-      process.env.SPARKPOST_API_KEY = envKeyOrig;
-      console.warn.restore();
-    });
+    it('should add images', function() {
+      var sendCfg;
+      var firstImage;
 
-    it('should set an api key from config', function() {
-      campaignSparkpost({key: key});
-      expect(sparkpostMock.args[0][0].key).to.equal(key);
-    });
+      provider.send(sendModel, done);
+      sendCfg = getSpSendConfig();
+      expect(sendCfg.transmissionBody.content.inline_images).to.be.an('array');
+      expect(sendCfg.transmissionBody.content.inline_images).to.have.length(1);
 
-    it('should set an api key from environment', function() {
-      process.env.SPARKPOST_API_KEY = key;
-
-      campaignSparkpost();
-      expect(sparkpostMock.args[0][0].key).to.equal(key);
-    });
-
-    it('should log a warning if no api key is set', function() {
-      delete process.env.SPARKPOST_API_KEY;
-
-      campaignSparkpost();
-      expect(console.warn).to.have.been.calledWith('campaign: SparkPost API key not set');
-      expect(sparkpostMock.args[0][0].key).not.to.exist;
+      firstImage = sendCfg.transmissionBody.content.inline_images[0];
+      expect(firstImage.type).to.equal(sendModel.images[0].mime);
+      expect(firstImage.data).to.equal(sendModel.images[0].data);
+      expect(firstImage.name).to.equal(sendModel.images[0].name);
     });
   });
 });
