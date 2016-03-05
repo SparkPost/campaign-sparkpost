@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/SparkPost/campaign-sparkpost#readme",
   "dependencies": {
+    "lodash": "^4.6.1",
     "sparkpost": "^1.1.0"
   },
   "devDependencies": {
