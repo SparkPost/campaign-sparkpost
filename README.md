@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/SparkPost/campaign-sparkpost.svg?branch=master)](https://travis-ci.org/SparkPost/campaign-sparkpost)
 [![Coverage Status](https://coveralls.io/repos/github/SparkPost/campaign-sparkpost/badge.svg?branch=master)](https://coveralls.io/github/SparkPost/campaign-sparkpost?branch=master)
 
-SparkPost provider for [Campaign](https://github.com/bevacqua/campaign)
+SparkPost provider for [Campaign](https://github.com/bevacqua/campaign).
 
 ## NOTE
 
@@ -27,7 +27,7 @@ client.send(...) // as usual
 
 ### `options.key` 
 
-Your SparkPost API key. If not included, `campaign-sparkpost` will attempt to use the `SPARKPOST_API_KEY
+Your SparkPost API key. If not included, `campaign-sparkpost` will attempt to use the `SPARKPOST_API_KEY`
 environment variable.
 
 ### `options.campaign` 
@@ -37,15 +37,16 @@ environment variable.
 ## Tags
 
 Campaign allows users to pass a `tags` array (defaults to `[model._template]`). If passed, the tags will be set on the 
-SparkPost transmission `metadata` object under the `tags` key and on each recipient. Recipients have a maximum of 10 tags, 
-so on the first 10 are set. Transmission metadata will contain the full set of tags.
+SparkPost transmission `metadata` object under the `tags` key and on each recipient as `recipient.tags`. Recipients have a maximum of 10 tags, 
+so only the first 10 are set. Transmission metadata will contain the full set of tags. The transmission metadata and 
+recipient tags will be available in SparkPost webhook data.
 
 
 ## Merge Data
 
 Any `provider.merge` data will be passed through to SparkPost. `provider.merge[*]` will be set as substitution data at the 
 transmission level. Merge data for recipients (e.g., `provider.merge['email@example.com']`) will be set as substitution 
-data at the recipient level.
+data for that recipient.
 
 ## License
 MIT
