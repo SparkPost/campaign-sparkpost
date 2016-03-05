@@ -4,11 +4,6 @@
 
 SparkPost provider for [Campaign](https://github.com/bevacqua/campaign).
 
-## NOTE
-
-Inlined images aren't supported yet, so we haven't published this repo to NPM. Follow [this issue](https://github.com/SparkPost/campaign-sparkpost/issues/10)
-to track when we have published to NPM.
-
 ## Usage
 
 ```

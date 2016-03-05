@@ -3,8 +3,6 @@
 var Sparkpost = require('sparkpost');
 var _ = require('lodash');
 
-// TODO images: attachments?
-
 module.exports = function(options) {
   var client;
   var opts = _.defaults({}, options, {num_rcpt_errors: 3, key: process.env.SPARKPOST_API_KEY});
@@ -19,16 +17,16 @@ module.exports = function(options) {
     name: 'sparkpost',
     send: function (model, done) {
       _.defaults(model, {provider: {}});
-      client.transmissions.send(getTransmissionsConfig(model), done);
+      client.transmissions.send(getTransmissionsConfig(model, opts), done);
     }
   };
 
-  function getTransmissionsConfig(model) {
-    return {
+  function getTransmissionsConfig(model, configOpts) {
+    var config = {
       transmissionBody: {
         content: {
           from: formatFrom(model),
-          campaignId: opts.campaign || model._template,
+          campaignId: configOpts.campaign || model._template,
           subject: model.subject,
           html: model.html
         },
@@ -36,8 +34,14 @@ module.exports = function(options) {
         metadata:  {tags: model.provider.tags || [model._template]},
         recipients: formatRecipients(model)
       },
-      num_rcpt_errors: opts.num_rcpt_errors
+      num_rcpt_errors: configOpts.num_rcpt_errors
     };
+
+    if (model.images.length) {
+      config.transmissionBody.content.inline_images = formatImages(model);
+    }
+
+    return config;
   }
 
   function formatFrom(model) {
@@ -48,6 +52,17 @@ module.exports = function(options) {
     }
 
     return from;
+  }
+
+  function formatImages(model) {
+    return _.map(model.images, function(image) {
+
+      return {
+        type: image.mime,
+        name: image.name,
+        data: image.data
+      };
+    });
   }
 
   function formatRecipients(model) {
