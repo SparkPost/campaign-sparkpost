@@ -30,6 +30,12 @@ client.send(...) // as usual
 Your SparkPost API key. If not included, `campaign-sparkpost` will attempt to use the `SPARKPOST_API_KEY`
 environment variable.
 
+### `options.num_rcpt_errors` 
+
+(Optional) Defaults to 3. The total number of errors to return, there will be at most one error per recipient. Setting this
+allows you to send large batches but not be overwhelmed by errors.
+
+
 ### `options.campaign` 
 
 (Optional) A SparkPost campaign to use when when sending. This can be used to search for mailings in SparkPost later.
