@@ -26,12 +26,12 @@ module.exports = function(options) {
       transmissionBody: {
         content: {
           from: formatFrom(model),
-          campaignId: configOpts.campaign || model._template,
+          campaignId: _.get(configOpts, 'campaign', model._template),
           subject: model.subject,
           html: model.html
         },
         substitutionData: _.get(model.provider.merge, '*', {}),
-        metadata:  {tags: model.provider.tags || [model._template]},
+        metadata:  {tags: _.get(model.provider, 'tags', [model._template])},
         recipients: formatRecipients(model)
       },
       num_rcpt_errors: configOpts.num_rcpt_errors
@@ -56,7 +56,6 @@ module.exports = function(options) {
 
   function formatImages(model) {
     return _.map(model.images, function(image) {
-
       return {
         type: image.mime,
         name: image.name,
