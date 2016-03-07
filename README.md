@@ -50,4 +50,4 @@ transmission level. Merge data for recipients (e.g., `provider.merge['email@exam
 data for that recipient.
 
 ## License
-MIT
+Apache 2.0

@@ -21,7 +21,7 @@
     "email": "developers@sparkpost.com",
     "url": "https://developers.sparkpost.com"
   },
-  "license": "MIT",
+  "license": "Apache 2.0",
   "bugs": {
     "url": "https://github.com/SparkPost/campaign-sparkpost/issues"
   },
